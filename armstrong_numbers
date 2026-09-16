@@ -1,0 +1,22 @@
+
+def armstrong(i):
+    s = str(i)
+    power = len(s)
+    return i == sum(int(digit) ** power for digit in s)
+
+def armstrong_num(INPUT, OUTPUT):
+   
+    with open(INPUT, encoding='utf-8') as fin, \
+         open(OUTPUT, 'w', encoding='utf-8') as fout:
+        
+        for line in fin:
+            number_str = line.strip()
+            
+            if number_str:
+                num = int(number_str)
+                
+                if armstrong(num):
+                    fout.write(f"{num}\n")
+
+if __name__ == '__main__':
+    armstrong_num('numbers.txt', 'armstrong.txt')
