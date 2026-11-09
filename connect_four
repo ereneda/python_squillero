@@ -1,0 +1,95 @@
+
+MOVES_FILENAME = "moves.txt"
+EMPTY = "-"
+NUM_COLUMNS = 7
+NUM_ROWS = 6
+
+
+def read_moves(filename):
+   
+    moves = []
+    try:
+        with open(filename, "r", encoding="utf-8") as file:
+            for line in file:
+                if line.strip():
+                    player, column = line.split()
+                    moves.append((player, int(column)))
+
+    except OSError:
+        print("Error reading file")
+        exit(1)
+
+    return moves
+
+
+def print_board(board):
+    
+    for r in range(NUM_ROWS):
+        for c in range(NUM_COLUMNS):
+            print(board[r][c], end="")
+        print()
+
+
+def find_bottom(board, column):
+    
+    bottom = NUM_ROWS - 1
+    while bottom >= 0 and board[bottom][column] != EMPTY:
+        bottom -= 1
+    return bottom
+
+
+def check_win(board):
+    
+    for r in range(NUM_ROWS):
+        for c in range(NUM_COLUMNS - 3):
+            if board[r][c] != EMPTY and board[r][c] == board[r][c + 1] == board[r][c + 2] == board[r][c + 3]:
+                return board[r][c]
+
+    for r in range(NUM_ROWS - 3):
+    
+        for c in range(NUM_COLUMNS):
+            if board[r][c] != EMPTY and board[r][c] == board[r + 1][c] == board[r + 2][c] == board[r + 3][c]:
+                return board[r][c]
+        
+        for c in range(NUM_COLUMNS - 3):
+            if board[r][c] != EMPTY and board[r][c] == board[r + 1][c + 1] == board[r + 2][c + 2] == board[r + 3][c + 3]:
+                return board[r][c]
+        
+        for c in range(3, NUM_COLUMNS):
+            if board[r][c] != EMPTY and board[r][c] == board[r + 1][c - 1] == board[r + 2][c - 2] == board[r + 3][c - 3]:
+                return board[r][c]
+
+    return None
+
+
+def main():
+
+    board = [[EMPTY for _ in range(NUM_COLUMNS)] for _ in range(NUM_ROWS)]
+    
+    print("Empty Grid")
+    print_board(board)
+    print()
+
+    moves = read_moves(MOVES_FILENAME)
+    num_moves = 0
+
+    for player, column in moves:
+        num_moves += 1
+        
+        symbol = "O" if num_moves % 2 == 1 else "X"
+        
+        pos = find_bottom(board, column)
+        board[pos][column] = symbol
+        
+        print(f"Player {player} Plays")
+        print_board(board)
+        print()
+        
+        if check_win(board) is not None:
+            winner = "G1" if symbol == "O" else "G2"
+            print(f"{winner} wins in {num_moves} moves")
+            break
+
+
+if __name__ == "__main__":
+    main()
